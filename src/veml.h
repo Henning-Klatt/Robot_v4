@@ -5,7 +5,7 @@
 #define VEML6040_I2C_ADDRESS 0x10
 
 // Multiplexer I2C Address
-#define MULTIPLEX_I2C_ADDRESS 0x70
+#define MULTIPLEX_I2C_ADDRESS 0x74
 
 // REGISTER CONF (00H) SETTINGS
 #define VEML6040_IT_40MS 0x00
@@ -58,7 +58,7 @@ public:
 class VemlArray {
 private:
     VEML6040 sensor;
-    void selectSensor(uint8_t sensor);
+    uint8_t selectSensor(uint8_t sensor);
 
 public:
     void begin(uint8_t config);
@@ -69,7 +69,7 @@ struct Color {
     uint16_t Red;
     uint16_t Green;
     uint16_t Blue;
-    float AL;
+    float    AL;
     uint16_t White;
     uint16_t CCT;
 };

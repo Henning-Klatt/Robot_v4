@@ -2,7 +2,9 @@
 #ifndef __MATH_H
 #include <math.h>
 #endif
+
 #include "veml.h"
+// #include "log.h"
 
 bool VEML6040::begin(void)
 {
@@ -116,17 +118,18 @@ void VemlArray::begin(uint8_t config)
     sensor.setConfiguration(VEML6040_IT_320MS + VEML6040_AF_AUTO + VEML6040_SD_ENABLE);
 
     for (uint8_t i = 0; i < 8; i++) {
-        selectSensor(i);
+        if (selectSensor(i) != 0) {
+        }
         sensor.begin();
         sensor.setConfiguration(config);
     }
 }
 
-void VemlArray::selectSensor(uint8_t sensor)
+uint8_t VemlArray::selectSensor(uint8_t sensor)
 {
     Wire.beginTransmission(MULTIPLEX_I2C_ADDRESS);
     Wire.write(1 << sensor);
-    Wire.endTransmission();
+    return Wire.endTransmission();
 }
 
 struct Color VemlArray::operator[](int index)
