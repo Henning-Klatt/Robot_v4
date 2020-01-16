@@ -4,7 +4,8 @@
 #endif
 
 #include "veml.h"
-// #include "log.h"
+#include "log.h"
+#include <Arduino.h>
 
 bool VEML6040::begin(void)
 {
@@ -110,39 +111,4 @@ uint16_t VEML6040::getCCT(float offset)
     cct = 4278.6 * pow(ccti, -1.2455);
 
     return ((uint16_t)cct);
-}
-
-void VemlArray::begin(uint8_t config)
-{
-    Wire.begin();
-    sensor.setConfiguration(VEML6040_IT_320MS + VEML6040_AF_AUTO + VEML6040_SD_ENABLE);
-
-    for (uint8_t i = 0; i < 8; i++) {
-        if (selectSensor(i) != 0) {
-        }
-        sensor.begin();
-        sensor.setConfiguration(config);
-    }
-}
-
-uint8_t VemlArray::selectSensor(uint8_t sensor)
-{
-    Wire.beginTransmission(MULTIPLEX_I2C_ADDRESS);
-    Wire.write(1 << sensor);
-    return Wire.endTransmission();
-}
-
-struct Color VemlArray::operator[](int index)
-{
-    selectSensor(index);
-    struct Color c;
-
-    c.Red = sensor.getRed();
-    c.Green = sensor.getGreen();
-    c.Blue = sensor.getBlue();
-    c.White = sensor.getWhite();
-    c.AL = sensor.getAmbientLight();
-    c.CCT = sensor.getCCT();
-
-    return c;
 }

@@ -3,7 +3,9 @@
 
 #include <Arduino.h>
 
-const uint8_t BUZZER_PIN = 11;
+namespace {
+    const uint8_t BUZZER_PIN = 11;
+}
 
 void beginBuzzer();
 

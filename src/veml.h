@@ -5,7 +5,7 @@
 #define VEML6040_I2C_ADDRESS 0x10
 
 // Multiplexer I2C Address
-#define MULTIPLEX_I2C_ADDRESS 0x74
+#define MULTIPLEX_I2C_ADDRESS 0x70
 
 // REGISTER CONF (00H) SETTINGS
 #define VEML6040_IT_40MS 0x00
@@ -39,6 +39,8 @@
 #define VEML6040_GSENS_640MS 0.01573
 #define VEML6040_GSENS_1280MS 0.007865
 
+#include <Arduino.h>
+
 class VEML6040 {
 private:
     uint16_t read(uint8_t);
@@ -53,25 +55,6 @@ public:
     uint16_t getWhite(void);
     uint16_t getCCT(float offset = 0.5);
     float getAmbientLight(void);
-};
-
-class VemlArray {
-private:
-    VEML6040 sensor;
-    uint8_t selectSensor(uint8_t sensor);
-
-public:
-    void begin(uint8_t config);
-    struct Color operator[](int index);
-};
-
-struct Color {
-    uint16_t Red;
-    uint16_t Green;
-    uint16_t Blue;
-    float    AL;
-    uint16_t White;
-    uint16_t CCT;
 };
 
 #endif

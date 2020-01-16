@@ -1,6 +1,9 @@
 #include "buzzer.h"
 
+#include "log.h"
+
 void beginBuzzer() {
+    log("Initializing buzzer...");
     pinMode(BUZZER_PIN, OUTPUT);
 }
 
