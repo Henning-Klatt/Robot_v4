@@ -10,14 +10,12 @@
 | D8   |                |          |             |                 |
 | D9   | Left backward  |          |             |                 |
 | D10  | Left forward   |          |             |                 |
-| D11  |                |          |             | Buzzer, WS2812B |
+| D11  |                |          |             |     Buzzer      |
+| D12  |                |          |             |                 |
+| D13  |                |          |             |     WS2812B     |
 | A0   |                |          |             | Battery Voltage |
 
 Battery Voltage: https://docs.google.com/spreadsheets/d/1yMOeYrJNpTg3SMe8cQBoHXpgwAv61uAHFVlT2RJjNy4/edit?usp=sharing
-
-The WS2812B LED's do affect the Buzzer, a silent brumming is hearable. Hopefully no one will notice this while the motors are running.
-
-ToDo: Put the WS2812B LED's to Pin D8 in order to stop the Buzzer going crazy.
 
 ## Instructions
 Put the FTDI Chip in the robot like shown in the picture
