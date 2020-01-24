@@ -1,43 +1,53 @@
 #include <Wire.h>
 #include <Arduino.h>
+#include <FastLED.h>
+#include <robot.h>
 
-#include "color.h"
-#include "log.h"
-#include "motor.h"
-#include "buzzer.h"
-
-VemlArray array;
+const uint8_t NUM_LEDS = 8;
+CRGB leds[NUM_LEDS];
 
 void setup() {
     Wire.begin();
     Serial.begin(9600);
 
-    while(!Serial); 
-    log("Initializing...");
-
-    beginBuzzer();
-    beginMotor();
-
-    array.begin(VEML6040_IT_160MS + VEML6040_AF_AUTO + VEML6040_SD_ENABLE);
-
-    log("Initialized");
+    Robot::begin();
 }
 
 void loop() {
-    color_t l = array[0];
-    color_t r = array[2];
+    Robot::Sensor::Color m = Robot::Sensor::C(Robot::Sensor::FM);
+    Robot::Sensor::Color l = Robot::Sensor::C(Robot::Sensor::FL);
+    Robot::Sensor::Color r = Robot::Sensor::C(Robot::Sensor::FR);
 
-    logf("%d %d %d %d %f %d", l.Red, l.Green, l.Blue, l.White, l.AL, l.CCT);
 
-    if (l.W() && r.W()) {
-        move(255, 255);
-    } else if (l.B() && r.W()) {
-        move(255, -255);
-    } else if (l.W() && r.B()) {
-        move(-255, 255);
-    } else {
-    }
+    Serial.print(l.to_string());
+    // Robot::logln("(%d %d) (%d %d)", l.Redread.Red, l.Redread.Green, l.Greenread.Red, l.Greenread.Green);
+    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)", 
+            l.Redread.Red, l.Greenread.Red,
+            l.Redread.Green, l.Greenread.Green,
+            l.Redread.Blue, l.Greenread.Blue,
+            l.Redread.White, l.Greenread.White);
+    Serial.print(r.to_string());
+    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)", 
+            r.Redread.Red, r.Greenread.Red,
+            r.Redread.Green, r.Greenread.Green,
+            r.Redread.Blue, r.Greenread.Blue,
+            r.Redread.White, r.Greenread.White);
+    // Serial.println(l.to_string() + " " + m.to_string() + " " + r.to_string());
 
-    delay(100);
+// Serial.println(Robot::Sensor::C(0).to_string() + " " +  Robot::Sensor::C(1).to_string() + " " +  Robot::Sensor::C(2).to_string());
+// Serial.println(Robot::Sensor::C(3).to_string() + " " +  Robot::Sensor::C(4).to_string() + " " +  Robot::Sensor::C(5).to_string());
+// Serial.println(Robot::Sensor::C(6).to_string() + " " +  Robot::Sensor::C(7).to_string() + " " +  Robot::Sensor::C(8).to_string());
+Robot::logln("\n\n\n\n\n\n\n");
+
+    // if (l.W() && r.W()) {
+    //     Robot::move(255, 255);
+    // } else if (l.B() && r.W()) {
+    //     Robot::move(255, -255);
+    // } else if (l.W() && r.B()) {
+    //     Robot::move(-255, 255);
+    // } else {
+    // }
+    
+
 }
 
