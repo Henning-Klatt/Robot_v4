@@ -103,14 +103,9 @@ namespace Robot {
 
             void set_led_color(CRGB color) {
                 FastLED.addLeds<NEOPIXEL, pin_neopixel>(leds, num_leds);
-                leds[0] = color;
-                leds[1] = color;
-                leds[2] = color;
-                leds[3] = color;
-                leds[4] = color;
-                leds[5] = color;
-                leds[6] = color;
-                leds[7] = color;
+                for(int i = 0; i < num_leds; i++){
+                  leds[i] = color;
+                }
                 FastLED.show();
             }
         }
