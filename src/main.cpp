@@ -3,7 +3,7 @@
 #include <FastLED.h>
 #include <robot.h>
 
-const uint8_t NUM_LEDS = 18;
+const uint8_t NUM_LEDS = 16;
 CRGB leds[NUM_LEDS];
 
 void setup() {
