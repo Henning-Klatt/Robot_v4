@@ -8,7 +8,7 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
     Wire.begin();
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     Robot::begin();
 }
@@ -21,13 +21,13 @@ void loop() {
 
     Serial.print(l.to_string());
     // Robot::logln("(%d %d) (%d %d)", l.Redread.Red, l.Redread.Green, l.Greenread.Red, l.Greenread.Green);
-    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)", 
+    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)",
             l.Redread.Red, l.Greenread.Red,
             l.Redread.Green, l.Greenread.Green,
             l.Redread.Blue, l.Greenread.Blue,
             l.Redread.White, l.Greenread.White);
     Serial.print(r.to_string());
-    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)", 
+    Robot::logln("(%d %d) (%d %d) (%d %d) (%d %d)",
             r.Redread.Red, r.Greenread.Red,
             r.Redread.Green, r.Greenread.Green,
             r.Redread.Blue, r.Greenread.Blue,
@@ -47,7 +47,6 @@ Robot::logln("\n\n\n\n\n\n\n");
     //     Robot::move(-255, 255);
     // } else {
     // }
-    
+
 
 }
-
