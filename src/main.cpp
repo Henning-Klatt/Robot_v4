@@ -6,8 +6,11 @@
 const uint8_t NUM_LEDS = 8;
 CRGB leds[NUM_LEDS];
 
+bool state = true;
+
 void setup() {
     Wire.begin();
+    Wire.setClock(3400000);
     Serial.begin(115200);
 
     Robot::begin();
