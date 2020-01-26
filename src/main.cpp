@@ -3,10 +3,8 @@
 #include <FastLED.h>
 #include <robot.h>
 
-const uint8_t NUM_LEDS = 8;
+const uint8_t NUM_LEDS = 18;
 CRGB leds[NUM_LEDS];
-
-bool state = true;
 
 void setup() {
     Wire.begin();

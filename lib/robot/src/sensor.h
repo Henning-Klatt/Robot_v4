@@ -21,7 +21,7 @@ namespace Robot {
             const uint8_t gsens_320ms           = 0.03146;
             const uint8_t gsens_640ms           = 0.01573;
             const uint8_t gsens_1280ms          = 0.007865;
-            const uint8_t num_leds = 8;
+            const uint8_t num_leds = 16;
 
             uint8_t last_configuration;
             CRGB leds[num_leds];
