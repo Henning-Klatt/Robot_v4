@@ -44,11 +44,6 @@ namespace Robot {
     }
 
     void move(int left, int right) {
-        digitalWrite(pin_left_bw, LOW);
-        digitalWrite(pin_right_bw, LOW);
-        digitalWrite(pin_left_fw, LOW);
-        digitalWrite(pin_right_fw, LOW);
-
         if (left < 0) {
             digitalWrite(pin_left_fw, LOW);
             analogWrite(pin_left_bw, abs(left));
