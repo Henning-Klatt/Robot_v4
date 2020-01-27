@@ -160,8 +160,7 @@ namespace Robot {
         }
 
         bool Color::W() {
-            // return Redread.Red > 1000 && Greenread.Red > 1000;
-            return Redread.White > 2000 && Greenread.White > 2000;
+            return Redread.White > 2500 && Greenread.White > 2500;
 
         }
 
