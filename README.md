@@ -26,3 +26,12 @@ When Uploading to the robot while it is turned off, please check if the jumper i
 
 When Uploading to the robot while it is turned on (armed motors), please remove the jumper. Pay attention, the robot may drive itself from your table.
 ![FTDI Orientation](https://raw.githubusercontent.com/Henning-Klatt/Robot_v4/master/images/Upload_Robot_On.JPG)
+
+# Problems
+
+Currently reading the sensor values via Robot::Sensor::refresh() produces somehow
+wrong values (the values change according to the surroundings, but are numerically
+much worse than in the last commit).
+My hunch says me, that this is a problem of the "force mode" of the VEML6040.
+I fixed the code, so that everyting LOOKS correct to me.
+Relevant funtions are in `lib/robot/src/sensor.cpp` (`refresh` and `read_color`).

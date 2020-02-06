@@ -21,31 +21,35 @@ namespace Robot {
             const uint8_t gsens_320ms           = 0.03146;
             const uint8_t gsens_640ms           = 0.01573;
             const uint8_t gsens_1280ms          = 0.007865;
+            const uint8_t it_40ms               = 0x00;
+            const uint8_t it_80ms               = 0x10;
+            const uint8_t it_160ms              = 0x20;
+            const uint8_t it_320ms              = 0x30;
+            const uint8_t it_640ms              = 0x40;
+            const uint8_t it_1280ms             = 0x50;
+            const uint8_t trig_disable          = 0x00;
+            const uint8_t trig_enable           = 0x04;
+            const uint8_t af_auto               = 0x00;
+            const uint8_t af_force              = 0x02;
+            const uint8_t sd_enable             = 0x00;
+            const uint8_t sd_disable            = 0x01;
+
             const uint8_t num_leds = 16;
 
-            uint8_t last_configuration;
+            typedef struct Read {
+                uint16_t Red;
+                uint16_t Green;
+                uint16_t Blue;
+                uint16_t White;
+            } Read;
+
             CRGB leds[num_leds];
 
-            void selectSensor(uint8_t sensor);
-            void setConfiguration(uint8_t config);
-            float read_AL();
-            uint16_t read_CCT(float);
+            void select_sensor(uint8_t sensor);
+            void set_configuration(uint8_t config);
             uint16_t read(uint8_t);
             void set_led_color(CRGB);
         }
-
-        const uint8_t it_40ms      = 0x00;
-        const uint8_t it_80ms      = 0x10;
-        const uint8_t it_160ms     = 0x20;
-        const uint8_t it_320ms     = 0x30;
-        const uint8_t it_640ms     = 0x40;
-        const uint8_t it_1280ms    = 0x50;
-        const uint8_t trig_disable = 0x00;
-        const uint8_t trig_enable  = 0x04;
-        const uint8_t af_auto      = 0x00;
-        const uint8_t af_force     = 0x02;
-        const uint8_t sd_enable    = 0x00;
-        const uint8_t sd_disable   = 0x01;
 
         const uint8_t FR = 1;
         const uint8_t FM = 2;
@@ -57,31 +61,19 @@ namespace Robot {
         const uint8_t BM = 8;
         const uint8_t BL = 9;
 
-        typedef struct Read {
-            uint16_t Red;
-            uint16_t Green;
-            uint16_t Blue;
-            uint16_t White;
-        } Read;
-
         typedef struct Color {
-            Read Redread;
-            Read Greenread;
-
-            float AL;
-            uint16_t CCT;
-
-            bool W();
-            bool G();
-            bool B();
-            bool S();
-
-            String to_string();
+            bool W;
+            bool G;
+            bool B;
+            String name;
         } Color;
+
+        extern Color C[9];
+
+        void refresh();
 
         void begin();
         void begin(uint8_t config);
-        Color C(uint8_t sensor);
     }
 }
 #endif

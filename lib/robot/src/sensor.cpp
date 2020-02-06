@@ -8,11 +8,11 @@
 namespace Robot {
     namespace Sensor {
         namespace {
-            void selectSensor(uint8_t sensor) {
+            void select_sensor(uint8_t sensor) {
                 if (sensor == 5) {
                     digitalWrite(pin_i2c_multiplexer, LOW);
                     digitalWrite(pin_i2c_sensor_5, HIGH);
-                } else {
+                } else if (sensor > 0 && sensor < 10) {
                     digitalWrite(pin_i2c_multiplexer, HIGH);
                     digitalWrite(pin_i2c_sensor_5, LOW);
 
@@ -27,63 +27,17 @@ namespace Robot {
                     if (result != 0) {
                         logln("I2C Error: %d", result);
                     }
+                } else {
+                    logln("Cannot select sensor (id=%d", sensor);
                 }
             }
 
-            void setConfiguration(uint8_t config) {
+            void set_configuration(uint8_t config) {
                 Wire.beginTransmission(sensor_i2c_address);
                 Wire.write(command_code_conf);
                 Wire.write(config);
                 Wire.write(0);
                 Wire.endTransmission();
-                last_configuration = config;
-            }
-
-            float read_AL(void) {
-                uint16_t sensorValue;
-                float ambientLightInLux;
-
-                sensorValue = read(command_code_green);
-
-                switch (last_configuration & 0x70) {
-                    case it_40ms:
-                        ambientLightInLux = sensorValue * gsens_40ms;
-                        break;
-                    case it_80ms:
-                        ambientLightInLux = sensorValue * gsens_80ms;
-                        break;
-                    case it_160ms:
-                        ambientLightInLux = sensorValue * gsens_160ms;
-                        break;
-                    case it_320ms:
-                        ambientLightInLux = sensorValue * gsens_320ms;
-                        break;
-                    case it_640ms:
-                        ambientLightInLux = sensorValue * gsens_640ms;
-                        break;
-                    case it_1280ms:
-                        ambientLightInLux = sensorValue * gsens_1280ms;
-                        break;
-                    default:
-                        ambientLightInLux = -1;
-                        break;
-                }
-                return ambientLightInLux;
-            }
-
-            uint16_t read_CCT(float offset) {
-                uint16_t red, blue, green;
-                float cct, ccti;
-
-                red = read(command_code_red);
-                green = read(command_code_green);
-                blue = read(command_code_blue);
-
-                ccti = ((float)red - (float)blue) / (float)green;
-                ccti = ccti + offset;
-                cct = 4278.6 * pow(ccti, -1.2455);
-
-                return ((uint16_t)cct);
             }
 
             uint16_t read(uint8_t commandCode) {
@@ -110,86 +64,77 @@ namespace Robot {
             }
         }
 
+        Color C[9]; // Declare
+
         void begin() {
-            begin(it_40ms + af_force + sd_enable);
+            begin(it_40ms + af_force + sd_enable + trig_enable);
         }
 
         void begin(uint8_t config) {
-
             pinMode(pin_i2c_multiplexer, OUTPUT);
             pinMode(pin_i2c_sensor_5, OUTPUT);
             digitalWrite(pin_i2c_multiplexer, HIGH);
             digitalWrite(pin_i2c_sensor_5, LOW);
 
             for (uint8_t i = 0; i < 8; i++) {
-                selectSensor(i);
-                setConfiguration(config);
+                select_sensor(i);
+                set_configuration(config);
             }
             logln("done");
         }
 
-        Color C(uint8_t sensor) {
-            selectSensor(sensor);
-
-
-            set_led_color(CRGB(100, 0, 0));
-            setConfiguration(it_40ms + af_force + sd_enable + trig_enable);
-            delay(50);
-
-            Color c;
-            c.Redread.Red = read(command_code_red);
-            c.Redread.Green = read(command_code_green);
-            c.Redread.Blue = read(command_code_blue);
-            c.Redread.White = read(command_code_white);
-            c.AL = read_AL();
-            c.CCT = read_CCT(0);
-
-            set_led_color(CRGB::Green);
-            setConfiguration(it_40ms + af_force + sd_enable + trig_disable);
-            setConfiguration(it_40ms + af_force + sd_enable + trig_enable);
-            delay(50);
-
-            c.Greenread.Red = read(command_code_red);
-            c.Greenread.Green = read(command_code_green);
-            c.Greenread.Blue = read(command_code_blue);
-            c.Greenread.White = read(command_code_white);
-
-            setConfiguration(it_40ms + af_force + sd_enable + trig_disable);
-
-            return c;
-        }
-
-        bool Color::W() {
-            return Redread.White > 2500 && Greenread.White > 2500;
-
-        }
-
-        bool Color::G() {
-            return Redread.Red < Greenread.Green && !W();
-        }
-
-        bool Color::B() {
-            return !W();
-        }
-
-        bool Color::S() {
-            return false;
-        }
-
-        String Color::to_string() {
-            if (W()) {
-                return "White";
-            } else if (G()) {
-                return "Green";
-            } else if (B()) {
-                return "Black";
-            } else if (W()) {
-                return "White";
-            } else if (S()) {
-                return "Silver";
+        void read_color(Read color[9]) {
+            for (uint8_t sensor = 1; sensor <= 9; sensor++) {
+                select_sensor(sensor);
+                set_configuration(it_40ms + af_force + sd_enable + trig_enable);
+                read(command_code_red); // After enabling trigger we have to do an additional I2C connection to trigger it
             }
+            delay(40);
+            for (uint8_t sensor = 1; sensor <= 9; sensor++) {
+                select_sensor(sensor);
 
-            return "";
+                color[sensor-1] = {
+                    .Red = read(command_code_red),
+                    .Green = read(command_code_green),
+                    .Blue = read(command_code_blue),
+                    .White = read(command_code_white)
+                };
+                set_configuration(it_40ms + af_force + sd_enable + trig_disable);
+            }
+        }
+
+        void refresh() {
+            Read red[9], green[9];
+
+            int x = millis();
+            set_led_color(CRGB(255, 0, 0));
+            delay(9);
+            read_color(red);
+            set_led_color(CRGB(0,255, 0));
+            delay(9);
+            read_color(green);
+            for (uint8_t sensor = 1; sensor <= 9; sensor++) {
+                if (red[sensor-1].White > 4000 && green[sensor-1].White > 4000) {
+                    C[sensor-1].name = "WHITE";
+                    C[sensor-1].W = true;
+                    C[sensor-1].G = false;
+                    C[sensor-1].B = false;
+                } else if (red[sensor].Red < green[sensor].Green) {
+                    C[sensor-1].name = "GREEN";
+                    C[sensor-1].W = false;
+                    C[sensor-1].G = true;
+                    C[sensor-1].B = false;
+                } else {
+                    C[sensor-1].name = "BLACK";
+                    C[sensor-1].W = false;
+                    C[sensor-1].G = false;
+                    C[sensor-1].B = true;
+                }
+            }
+            Serial.print(C[FL].name);
+            Robot::logln(" (%d %d) (%d %d) (%d %d) (%d %d) ", red[FL].Red, green[FL].Red, red[FL].Green, green[FL].Green, red[FL].Blue, green[FL].Blue, red[FL].White, green[FL].White);
+
+
         }
     }
 }
