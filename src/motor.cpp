@@ -16,11 +16,6 @@ void beginMotor() {
 }
 
 void move(int left, int right) {
-    digitalWrite(left_bw, LOW);
-    digitalWrite(right_bw, LOW);
-    digitalWrite(left_fw, LOW);
-    digitalWrite(right_fw, LOW);
-
     if (left < 0) {
         digitalWrite(left_fw, LOW);
         analogWrite(left_bw, abs(left));
@@ -30,7 +25,6 @@ void move(int left, int right) {
     } else {
         digitalWrite(left_bw, LOW);
         digitalWrite(left_fw, LOW);
-        return;
     }
 
     if (right < 0) {
@@ -42,6 +36,5 @@ void move(int left, int right) {
     } else {
         digitalWrite(right_bw, LOW);
         digitalWrite(right_fw, LOW);
-        return;
     }
 }

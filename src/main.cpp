@@ -1,43 +1,71 @@
 #include <Wire.h>
 #include <Arduino.h>
+#include <FastLED.h>
 
 #include "color.h"
-#include "log.h"
+//#include "log.h"
 #include "motor.h"
 #include "buzzer.h"
 
 VemlArray array;
 
-void setup() {
-    Wire.begin();
-    Serial.begin(9600);
+CRGB leds[16];
 
-    while(!Serial); 
-    log("Initializing...");
+
+void setup() {
+    FastLED.addLeds<NEOPIXEL, 13>(leds, 16);
+
+    for(byte i = 0; i < 16; i++) {
+      leds[i] = CRGB(155,155,155);
+    }
+    FastLED.show();
+    Wire.begin();
+    Serial.begin(115200);
+
+    while(!Serial);
+    Serial.println("Initializing...");
 
     beginBuzzer();
     beginMotor();
 
-    array.begin(VEML6040_IT_160MS + VEML6040_AF_AUTO + VEML6040_SD_ENABLE);
+    array.begin(VEML6040_IT_40MS + VEML6040_AF_AUTO + VEML6040_SD_ENABLE);
 
-    log("Initialized");
+    Serial.println("Initialized");
 }
+
+/*
+0: Vorne rechts
+1: Vorne Mitte
+2: Vorne links
+3: Mitte rechts
+4: Mitte links
+5: Hinten rechts
+*/
+
 
 void loop() {
-    color_t l = array[0];
-    color_t r = array[2];
+    color_t l = array[2]; // Vorne links
+    color_t l1 = array[4];
+    color_t r = array[0]; // Vorne rechts
+    color_t r1 = array[3];
+    color_t m = array[1]; // Vorne Mitte
 
-    logf("%d %d %d %d %f %d", l.Red, l.Green, l.Blue, l.White, l.AL, l.CCT);
+    //Serial.println(l1.White);
 
-    if (l.W() && r.W()) {
-        move(255, 255);
-    } else if (l.B() && r.W()) {
-        move(255, -255);
-    } else if (l.W() && r.B()) {
-        move(-255, 255);
-    } else {
+
+    if ((l.W() && r.W()) || m.B()) {
+        move(200, 200);
+    } if (l.B() && r.W()) {
+        //Serial.println("nach rechts");
+        move(-100, 100);
     }
 
-    delay(100);
+    if (l.W() && r.B()) {
+        //Serial.println("nach links");
+        move(100, -100);
+    }
+    /*if (l.W() && m.W() && r1.B()) {
+      move(150, -50);
+      buzz(433, 500);
+    }*/
 }
-

@@ -12,7 +12,7 @@ namespace {
 
 #define log(fmt) serial.printf("%s:%s - " fmt "\n", __FILE__, __func__);
 // #define logf(fmt, ...) serial.printf("%s:%s - " fmt "\n", __FILE__, __func__, __VA_ARGS__);
-#define logf(fmt, ...) serial.printf(fmt "\n", __VA_ARGS__);
+#define logff(fmt, ...) serial.printf(fmt "\n", __VA_ARGS__);
 
 
 // void log(char fmt[]);

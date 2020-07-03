@@ -30,8 +30,7 @@ uint8_t VemlArray::selectSensor(uint8_t sensor)
     return Wire.endTransmission();
 }
 
-color_t VemlArray::operator[](int index)
-{
+color_t VemlArray::operator[](int index){
     selectSensor(index);
 
     color_t c = {
@@ -64,7 +63,7 @@ bool color_t::S() {
 
 
 uint8_t color_t::color() {
-    if (White > 1000) {
+    if (White > 10000) {
         return 2;
     } else {
         return 0;
