@@ -6,19 +6,31 @@
 //#include "log.h"
 #include "motor.h"
 #include "buzzer.h"
+#include "notes.h"
 
 VemlArray array;
 
-CRGB leds[16];
 
 
 void setup() {
-    FastLED.addLeds<NEOPIXEL, 13>(leds, 16);
 
-    for(byte i = 0; i < 16; i++) {
-      leds[i] = CRGB(155,155,155);
+
+  randomSeed(analogRead(7));
+
+    int song = random(0,3);
+
+    switch(song){
+      case 0:
+        tetris();
+        break;
+      case 1:
+        nokia();
+        break;
+      case 2:
+        starwars();
+        break;
     }
-    FastLED.show();
+
     Wire.begin();
     Serial.begin(115200);
 
@@ -40,20 +52,20 @@ void setup() {
 3: Mitte rechts
 4: Mitte links
 5: Hinten rechts
+6: Hinten Mitte
 */
 
 
 void loop() {
     color_t l = array[2]; // Vorne links
-    color_t l1 = array[4];
     color_t r = array[0]; // Vorne rechts
-    color_t r1 = array[3];
-    color_t m = array[1]; // Vorne Mitte
+    color_t m = array[1];
+    color_t b = array[6];
 
-    //Serial.println(l1.White);
+    Serial.println(m.White);
 
 
-    if ((l.W() && r.W()) || m.B()) {
+    if (m.B()) {
         move(200, 200);
     } if (l.B() && r.W()) {
         //Serial.println("nach rechts");
@@ -64,8 +76,21 @@ void loop() {
         //Serial.println("nach links");
         move(100, -100);
     }
-    /*if (l.W() && m.W() && r1.B()) {
-      move(150, -50);
-      buzz(433, 500);
-    }*/
+
+    if (l.W() && m.W() && r.W() && b.B()) {
+      move(100, 100);
+      delay(200);
+      int st = millis();
+      while (m.W() && (millis() - st) < 1500) {
+        m = array[1];
+        move(100, -100);
+      }
+      if (m.B()) {
+        return;
+      }
+      while (!m.B()) {
+        m = array[1];
+        move(-100, 100);
+      }
+    }
 }
